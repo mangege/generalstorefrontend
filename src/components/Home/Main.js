@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import Axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -48,8 +48,12 @@ function Product(props) {
 function ProductList() {
     const [items, setItems] = useState([]);
     const [pageNo, setPageNo] = useState(0);
+    // https://zh-hans.reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
+    const prevItemIdsRef = useRef([]);
     useEffect(() => {
-        Axios.get('http://192.168.2.181:3000/api/items').then(resp => {
+        let prevItemIds = prevItemIdsRef.current;
+        Axios.get('http://192.168.2.181:3000/api/items', {params: {ids: prevItemIds.join(',')}}).then(resp => {
+            prevItemIdsRef.current = resp.data.data.map(a => a.id);
             setItems(i => [...i, ...resp.data.data]);
         });
     }, [pageNo]);
@@ -58,7 +62,7 @@ function ProductList() {
             dataLength={items.length}
             next={() => { setPageNo(a => a + 1) }}
             hasMore={true}
-            loader={<div className=" text-center"><div class="spinner-border"><p className="sr-only text-center">加载中...</p></div></div>}
+            loader={<div className=" text-center"><div className="spinner-border"><p className="sr-only text-center">加载中...</p></div></div>}
             endMessage={
                 <p className="text-center">没有了!</p>
             }>
