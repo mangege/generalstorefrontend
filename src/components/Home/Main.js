@@ -3,6 +3,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import Axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
+function formatVolume(volume) {
+    if (volume >= 10000) {
+        return `${(volume/10000).toFixed(0)}W`
+    }
+    if (volume >= 1000) {
+        return `${(volume/1000).toFixed(0)}K`
+    }
+    return volume;
+}
+
 function Nav() {
     return (
         <ul className="nav d-flex justify-content-between">
@@ -37,8 +47,8 @@ function Product(props) {
                     <div className="mw-100 text-break text-truncate"><a className="text-dark" href={itemAttrs.referral_url}>{itemAttrs.title}</a>
                     </div>
                     <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
-                    </span><span className="text-muted">已售 {itemAttrs.volume}</span></div>
-                    <button className="btn btn-secondary btn-sm w-100">{itemAttrs.referral_word}</button>
+                    </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
+                    <button className="btn btn-primary btn-sm w-100">{itemAttrs.referral_word}</button>
                 </div>
             </div>
         </div>
