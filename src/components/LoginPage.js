@@ -2,15 +2,17 @@ import React, { useState, Fragment } from 'react';
 import { useHistory } from "react-router-dom";
 import Axios from 'axios';
 import { AuthContext, SetAuthTokenToLocal } from '../AuthContext'
+import Clipboard from 'react-clipboard.js';
 
 function RegisterTips() {
     return (
         <Fragment>
             <div className="alert alert-success" role="alert">
-                注册成功!登录口令已复制,请妥善保存您的登录口令.
+                注册成功!点击下文复制按钮复制登录口令,请妥善保存您的登录口令. <br />
+                点登录按钮即可登录.
             </div>
             <div className="alert alert-danger" role="alert">
-                注意:遗忘登录口令无法找回,已阅优惠等数据即丢失.
+                注意:遗忘登录口令无法找回,即对应用户无法登录.
             </div>
         </Fragment>
     );
@@ -74,9 +76,13 @@ function LoginPage() {
                 {!!loginTips &&
                     <div className="alert alert-warning">{loginTips}</div>
                 }
+
                 <input type="text" className="form-control" value={loginToken} onChange={handleInputChange} onKeyPress={e => { e.key === 'Enter' && login() }} placeholder="登录口令" />
                 <button className="btn btn-secondary mt-2" onClick={register}>注册</button>
                 <button className="btn btn-primary mt-2" onClick={login}>登录</button>
+                {showRegisterTips &&
+                    <Clipboard component="button" className="btn btn-warning mt-2" data-clipboard-text={loginToken}>复制登录口令</Clipboard>
+                }
                 <div className="alert alert-info mt-2" role="alert">
                     注册无需填写任何信息,点击注册即会随机生成登录口令并注册!
                 </div>

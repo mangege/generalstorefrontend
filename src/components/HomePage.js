@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import Axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import Clipboard from 'react-clipboard.js';
 
 import Header from './Header'
 
@@ -50,7 +51,7 @@ function Product(props) {
                     </div>
                     <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
                     </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
-                    <button className="btn btn-primary btn-sm w-100 px-1">{itemAttrs.referral_word}</button>
+                    <Clipboard component="button" className="btn btn-primary btn-sm w-100 px-1" data-clipboard-text={itemAttrs.referral_word}>{itemAttrs.referral_word||'暂无口令'}</Clipboard>
                 </div>
             </div>
         </div>
@@ -59,20 +60,22 @@ function Product(props) {
 
 function ProductList() {
     const [items, setItems] = useState([]);
-    const [pageNo, setPageNo] = useState(0);
     // https://zh-hans.reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
     const prevItemIdsRef = useRef([]);
-    useEffect(() => {
+    function getItems() {
         let prevItemIds = prevItemIdsRef.current;
-        Axios.get('/api/items', { params: { ids: prevItemIds.join(',') } }).then(resp => {
+        Axios.get('/api/items', { params: { item_ids: prevItemIds.join(',') } }).then(resp => {
             prevItemIdsRef.current = resp.data.data.map(a => a.id);
             setItems(i => [...i, ...resp.data.data]);
         });
-    }, [pageNo]);
+    }
+    useEffect(() => {
+        getItems()
+    }, [])
     return (
         <InfiniteScroll
             dataLength={items.length}
-            next={() => { setPageNo(a => a + 1) }}
+            next={() => { getItems() }}
             hasMore={true}
             loader={<div className=" text-center"><div className="spinner-border"><p className="sr-only text-center">加载中...</p></div></div>}
             endMessage={

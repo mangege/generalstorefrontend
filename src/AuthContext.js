@@ -1,8 +1,6 @@
 import React from 'react';
 import Axios from 'axios';
 
-Axios.defaults.baseURL = 'http://192.168.2.181:3000';
-
 const tokenKey = "AuthToken";
 
 export function SetAuthTokenToLocal(aToken) {
