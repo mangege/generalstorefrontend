@@ -12,7 +12,7 @@ import HomePage from './components/HomePage'
 import LoginPage from './components/LoginPage'
 
 
-Axios.defaults.baseURL = 'http://192.168.2.181:3000';
+// Axios.defaults.baseURL = 'http://192.168.2.181:3000';
 
 function App() {
   const [authToken, setAuthToken] = React.useState('');

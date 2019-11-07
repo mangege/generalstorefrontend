@@ -19,7 +19,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build -o gitee",
+    "postdeploy": "scp build/index.html generalstore@h-tc-zj.mangege.com:/home/generalstore/apps/generalstorefrontend/"
   },
   "eslintConfig": {
     "extends": "react-app"
