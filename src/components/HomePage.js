@@ -6,6 +6,8 @@ import Clipboard from 'react-clipboard.js';
 
 import Header from './Header'
 
+const PAGE_SIZE = 24;
+
 function formatVolume(volume) {
     if (volume >= 10000) {
         return `${(volume / 10000).toFixed(0)}W`
@@ -16,18 +18,19 @@ function formatVolume(volume) {
     return volume;
 }
 
-function Nav() {
+function Nav(props) {
+    let materialKinds = ['双11非预售|大额券', '双11非预售|聚划算热销', '双11非预售|天猫国际', '双11非预售|超级大牌', '双11非预售|行业尖货', '双11非预售|工厂直供']
+
     return (
-        <ul className="nav d-flex justify-content-between">
-            <li className="nav-item ">
-                <a className="nav-link text-muted" href="/">大额券</a>
-            </li>
+        <ul className="nav">
             <li className="nav-item">
-                <a className="nav-link text-muted" href="/">限量抢</a>
+                <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind('') }} >全部</button>
             </li>
-            <li className="nav-item">
-                <a className="nav-link pr-0 text-muted" href="/">天猫国际精选</a>
-            </li>
+            {materialKinds.map((mKind, idx) =>
+                <li className={`nav-item  ${idx >=2 ? 'd-none d-lg-block d-xl-block' : ''}`} key={mKind}>
+                    <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind(mKind) }} >{mKind.split('|')[1]}</button>
+                </li>
+            )}
         </ul>
     );
 };
@@ -51,32 +54,37 @@ function Product(props) {
                     </div>
                     <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
                     </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
-                    <Clipboard component="button" className="btn btn-primary btn-sm w-100 px-1" data-clipboard-text={itemAttrs.referral_word}>{itemAttrs.referral_word||'暂无口令'}</Clipboard>
+                    <Clipboard component="button" className="btn btn-primary btn-sm w-100 px-1" data-clipboard-text={itemAttrs.referral_word}>{itemAttrs.referral_word || '暂无口令'}</Clipboard>
                 </div>
             </div>
         </div>
     );
 }
 
-function ProductList() {
+function ProductList(props) {
     const [items, setItems] = useState([]);
+    const [hasMore, setHasMore] = useState(true);
     // https://zh-hans.reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
     const prevItemIdsRef = useRef([]);
-    function getItems() {
+    function getItems(materialKind) {
         let prevItemIds = prevItemIdsRef.current;
-        Axios.get('/api/items', { params: { item_ids: prevItemIds.join(',') } }).then(resp => {
+        Axios.get('/api/items', { params: { item_ids: prevItemIds.join(','), material_kind: materialKind } }).then(resp => {
             prevItemIdsRef.current = resp.data.data.map(a => a.id);
+            if (resp.data.data.length < PAGE_SIZE) {
+                setHasMore(false);
+            }
             setItems(i => [...i, ...resp.data.data]);
         });
     }
     useEffect(() => {
-        getItems()
-    }, [])
+        prevItemIdsRef.current = [];
+        getItems(props.materialKind);
+    }, [props.materialKind]);
     return (
         <InfiniteScroll
             dataLength={items.length}
-            next={() => { getItems() }}
-            hasMore={true}
+            next={() => { getItems(props.materialKind) }}
+            hasMore={hasMore}
             loader={<div className=" text-center"><div className="spinner-border"><p className="sr-only text-center">加载中...</p></div></div>}
             endMessage={
                 <p className="text-center">没有了!</p>
@@ -89,14 +97,16 @@ function ProductList() {
 }
 
 function Main() {
+    const [materialKind, setMaterialKind] = useState('');
+
     return (
         <main>
-            {/* <div className="container">
-                <Nav />
-            </div> */}
+            <div className="container">
+                <Nav setMaterialKind={setMaterialKind} />
+            </div>
             <div className="bg-light">
                 <div className="container">
-                    <ProductList />
+                    <ProductList materialKind={materialKind} key={materialKind} />
                 </div>
             </div>
         </main>
