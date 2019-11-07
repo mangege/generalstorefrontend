@@ -91,9 +91,9 @@ function ProductList() {
 function Main() {
     return (
         <main>
-            <div className="container">
+            {/* <div className="container">
                 <Nav />
-            </div>
+            </div> */}
             <div className="bg-light">
                 <div className="container">
                     <ProductList />
