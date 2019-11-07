@@ -1,14 +1,39 @@
 import React from 'react';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+
+import { AuthContext, GetAuthTokenByLocal } from './AuthContext'
 import './App.css';
-import Header from './components/Header'
-import Main from './components/Home/Main'
+import HomePage from './components/HomePage'
+import LoginPage from './components/LoginPage'
 
 function App() {
+  const [authToken, setAuthToken] = React.useState('');
+
+  let aToken = GetAuthTokenByLocal();
+  if (aToken !== '' && aToken !== authToken) {
+    setAuthToken(aToken);
+  }
+  React.useEffect(() => {
+
+  }, [authToken]);
+
   return (
-    <div>
-      <Header />
-      <Main />
-    </div >
+    <AuthContext.Provider value={{ authToken, setAuthToken }}>
+      <Router>
+        <Switch>
+          <Route path="/login">
+            <LoginPage />
+          </Route>
+          <Route path="/">
+            <HomePage />
+          </Route>
+        </Switch>
+      </Router>
+    </AuthContext.Provider>
   );
 }
 

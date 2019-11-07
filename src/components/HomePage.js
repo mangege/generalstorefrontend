@@ -3,12 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import Axios from 'axios';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
+import Header from './Header'
+
 function formatVolume(volume) {
     if (volume >= 10000) {
-        return `${(volume/10000).toFixed(0)}W`
+        return `${(volume / 10000).toFixed(0)}W`
     }
     if (volume >= 1000) {
-        return `${(volume/1000).toFixed(0)}K`
+        return `${(volume / 1000).toFixed(0)}K`
     }
     return volume;
 }
@@ -48,7 +50,7 @@ function Product(props) {
                     </div>
                     <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
                     </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
-                    <button className="btn btn-primary btn-sm w-100">{itemAttrs.referral_word}</button>
+                    <button className="btn btn-primary btn-sm w-100 px-1">{itemAttrs.referral_word}</button>
                 </div>
             </div>
         </div>
@@ -62,7 +64,7 @@ function ProductList() {
     const prevItemIdsRef = useRef([]);
     useEffect(() => {
         let prevItemIds = prevItemIdsRef.current;
-        Axios.get('http://192.168.2.181:3000/api/items', {params: {ids: prevItemIds.join(',')}}).then(resp => {
+        Axios.get('/api/items', { params: { ids: prevItemIds.join(',') } }).then(resp => {
             prevItemIdsRef.current = resp.data.data.map(a => a.id);
             setItems(i => [...i, ...resp.data.data]);
         });
@@ -98,4 +100,13 @@ function Main() {
     );
 };
 
-export default Main;
+function HomePage() {
+    return (
+        <div>
+            <Header />
+            <Main />
+        </div>
+    );
+}
+
+export default HomePage;

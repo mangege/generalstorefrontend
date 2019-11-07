@@ -1,0 +1,15 @@
+.login-page {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-wrap {
+    width: 100%;
+    max-width: 320px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
