@@ -42,7 +42,7 @@ function Product(props) {
     return (
         <div className="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 p-1">
             <div className="card shadow-sm">
-                <a href={itemAttrs.referral_url}>
+                <a target="_blank" href={itemAttrs.referral_url}>
                     <picture>
                         <source srcSet={webpUrl} type="image/webp" />
                         <source srcSet={jpgUrl} type="image/jpeg" />
@@ -50,7 +50,7 @@ function Product(props) {
                     </picture>
                 </a>
                 <div className="card-body p-2 small">
-                    <div className="mw-100 text-break text-truncate"><a className="text-dark" href={itemAttrs.referral_url}>{itemAttrs.title}</a>
+                    <div className="mw-100 text-break text-truncate"><a target="_blank" className="text-dark" href={itemAttrs.referral_url}>{itemAttrs.title}</a>
                     </div>
                     <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
                     </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
