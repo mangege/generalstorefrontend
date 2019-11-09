@@ -66,9 +66,9 @@ function ProductList(props) {
     const [hasMore, setHasMore] = useState(true);
     // https://zh-hans.reactjs.org/docs/hooks-faq.html#how-to-get-the-previous-props-or-state
     const prevItemIdsRef = useRef([]);
-    function getItems(materialKind) {
+    function getItems(materialKind, offset) {
         let prevItemIds = prevItemIdsRef.current;
-        Axios.get('/api/items', { params: { item_ids: prevItemIds.join(','), material_kind: materialKind } }).then(resp => {
+        Axios.get('/api/items', { params: { item_ids: prevItemIds.join(','), material_kind: materialKind, offset: offset } }).then(resp => {
             prevItemIdsRef.current = resp.data.data.map(a => a.id);
             if (resp.data.data.length < PAGE_SIZE) {
                 setHasMore(false);
@@ -78,12 +78,12 @@ function ProductList(props) {
     }
     useEffect(() => {
         prevItemIdsRef.current = [];
-        getItems(props.materialKind);
+        getItems(props.materialKind, 0);
     }, [props.materialKind]);
     return (
         <InfiniteScroll
             dataLength={items.length}
-            next={() => { getItems(props.materialKind) }}
+            next={() => { getItems(props.materialKind, items.length) }}
             hasMore={hasMore}
             loader={<div className=" text-center"><div className="spinner-border"><p className="sr-only text-center">加载中...</p></div></div>}
             endMessage={
