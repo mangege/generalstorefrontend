@@ -19,7 +19,7 @@ function formatVolume(volume) {
 }
 
 function Nav(props) {
-    let materialKinds = ['双11非预售|大额券', '双11非预售|聚划算热销', '双11非预售|天猫国际', '双11非预售|超级大牌', '双11非预售|行业尖货', '双11非预售|工厂直供']
+    let materialKinds = ['普通|好券直播/好券直播', '普通|大额券/大额券', '普通|高佣榜/热销', '普通|品牌券/品牌券', '普通|有好货/有好货', '普通|潮流范/潮流范', '普通|特惠/特惠']
 
     return (
         <ul className="nav">
@@ -28,7 +28,7 @@ function Nav(props) {
             </li>
             {materialKinds.map((mKind, idx) =>
                 <li className={`nav-item  ${idx >=2 ? 'd-none d-lg-block d-xl-block' : ''}`} key={mKind}>
-                    <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind(mKind) }} >{mKind.split('|')[1]}</button>
+                    <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind(mKind.split('/')[0]) }} >{mKind.split('/')[1]}</button>
                 </li>
             )}
         </ul>
