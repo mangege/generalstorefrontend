@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import Axios from 'axios';
 import { AuthContext, SetAuthTokenToLocal } from '../AuthContext'
 import Clipboard from 'react-clipboard.js';
+import Toast from './Toast'
 
 function RegisterTips() {
     return (
@@ -67,6 +68,12 @@ function LoginPage() {
         setLoginToken(event.target.value);
     }
 
+    const [showCopyTips, setShowCopyTips] = useState(false);
+    function onCopySuccess() {
+        setShowCopyTips(true);
+        setTimeout(() => setShowCopyTips(false), 1000);
+    }
+
     return (
         <div className="login-page bg-light">
             <div className="login-wrap">
@@ -81,12 +88,15 @@ function LoginPage() {
                 <button className="btn btn-secondary mt-2" onClick={register}>注册</button>
                 <button className="btn btn-primary mt-2" onClick={login}>登录</button>
                 {showRegisterTips &&
-                    <Clipboard component="button" className="btn btn-warning mt-2" data-clipboard-text={loginToken}>复制登录口令</Clipboard>
+                    <Clipboard component="button" onSuccess={onCopySuccess} className="btn btn-warning mt-2" data-clipboard-text={loginToken}>复制登录口令</Clipboard>
                 }
                 <div className="alert alert-info mt-2" role="alert">
                     注册无需填写任何信息,点击注册即会随机生成登录口令并注册!
                 </div>
             </div>
+            {showCopyTips &&
+                <Toast tips="复制登录口令成功!" />
+            }
         </div>
     );
 }

@@ -5,6 +5,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Clipboard from 'react-clipboard.js';
 
 import Header from './Header'
+import Toast from './Toast'
 
 const PAGE_SIZE = 24;
 
@@ -27,7 +28,7 @@ function Nav(props) {
                 <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind('') }} >全部</button>
             </li>
             {materialKinds.map((mKind, idx) =>
-                <li className={`nav-item  ${idx >=2 ? 'd-none d-lg-block d-xl-block' : ''}`} key={mKind}>
+                <li className={`nav-item  ${idx >= 2 ? 'd-none d-lg-block d-xl-block' : ''}`} key={mKind}>
                     <button className="nav-link text-muted btn btn-link" onClick={() => { props.setMaterialKind(mKind.split('/')[0]) }} >{mKind.split('/')[1]}</button>
                 </li>
             )}
@@ -39,25 +40,36 @@ function Product(props) {
     let itemAttrs = props.item.attributes;
     let jpgUrl = `${itemAttrs.pict_url}_300x300Q90.jpg`;
     let webpUrl = `${itemAttrs.pict_url}_300x300_.webp`;
+    const [showCopyTips, setShowCopyTips] = useState(false);
+    function onCopySuccess() {
+        setShowCopyTips(true);
+        setTimeout(() => setShowCopyTips(false), 1000);
+    }
+
     return (
-        <div className="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 p-1">
-            <div className="card shadow-sm">
-                <a target="_blank" href={itemAttrs.referral_url}>
-                    <picture>
-                        <source srcSet={webpUrl} type="image/webp" />
-                        <source srcSet={jpgUrl} type="image/jpeg" />
-                        <img src={jpgUrl} className="card-img-top" alt={itemAttrs.title}></img>
-                    </picture>
-                </a>
-                <div className="card-body p-2 small">
-                    <div className="mw-100 text-break text-truncate"><a target="_blank" className="text-dark" href={itemAttrs.referral_url}>{itemAttrs.title}</a>
+        <>
+            <div className="col-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 p-1">
+                <div className="card shadow-sm">
+                    <a target="_blank" rel="noopener noreferrer" href={itemAttrs.referral_url}>
+                        <picture>
+                            <source srcSet={webpUrl} type="image/webp" />
+                            <source srcSet={jpgUrl} type="image/jpeg" />
+                            <img src={jpgUrl} className="card-img-top" alt={itemAttrs.title}></img>
+                        </picture>
+                    </a>
+                    <div className="card-body p-2 small">
+                        <div className="mw-100 text-break text-truncate"><a target="_blank" rel="noopener noreferrer" className="text-dark" href={itemAttrs.referral_url}>{itemAttrs.title}</a>
+                        </div>
+                        <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
+                        </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
+                        <Clipboard component="button" onSuccess={onCopySuccess} className="btn btn-primary btn-sm w-100 px-1" data-clipboard-text={itemAttrs.referral_word}>{itemAttrs.referral_word || '暂无口令'}</Clipboard>
                     </div>
-                    <div className="text-dark d-flex justify-content-between"><span>¥<span className="font-weight-bold">{itemAttrs.price}</span> <span className="text-muted">¥<del>{itemAttrs.orig_price}</del></span>
-                    </span><span className="text-muted">已售 {formatVolume(itemAttrs.volume)}</span></div>
-                    <Clipboard component="button" className="btn btn-primary btn-sm w-100 px-1" data-clipboard-text={itemAttrs.referral_word}>{itemAttrs.referral_word || '暂无口令'}</Clipboard>
                 </div>
             </div>
-        </div>
+            {showCopyTips &&
+                <Toast tips="复制口令成功,打开淘宝App即可购买!" />
+            }
+        </>
     );
 }
 
